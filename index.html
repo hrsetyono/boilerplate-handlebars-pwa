@@ -17,33 +17,94 @@
   <meta name="apple-mobile-web-app-title" content="Noble Court">
 
   <!-- FAVICON -->
-  <link rel="icon" href="assets/images/icon-128x128.png">
-  <link rel="apple-touch-icon" href="assets/images/icon-192x192.png">
-  <link rel="apple-touch-icon-precomposed" href="assets/images/icon-192x192.png">
+  <link rel="icon" href="/assets/images/icon-128x128.png">
+  <!-- <link rel="apple-touch-icon" href="/assets/images/icon-192x192.png">
+  <link rel="apple-touch-icon-precomposed" href="/assets/images/icon-192x192.png"> -->
 
   <!-- STYLESHEET -->
-  <link rel="stylesheet" href="assets/css/framework.css">
-  <link rel="stylesheet" href="assets/css/app.css">
+  <link rel="stylesheet" href="/assets/css/framework.css">
+  <link rel="stylesheet" href="/assets/css/app.css">
+  <link rel="stylesheet" href="/assets/css/dashicons.css">
 
 </head>
 <body>
-<header class="main-nav">
+<!-- NAVIGATION -->
+<section class="main-nav">
+  <h-row><h-column class="nav-col">
+    <!-- Logo -->
+    <div class="nav-logo">
+      <a href="/" class="custom-logo-link">
+        <img src="/assets/images/icon-128x128.png" class="custom-logo" itemprop="logo">
+      </a>
+    </div>
 
-</header>
+    <!-- Mobile toggle -->
+    <div id="nav-toggle" class="menu-item nav-toggle">
+      <a>
+        <i class="dashicons-before dashicons-menu"></i> Menu
+      </a>
+    </div>
+
+    <!-- Menu Item (make this dynamic) -->
+    <nav class="nav-wrapper">
+      <div class="menu-item current-menu-item">
+        <a href="/"> Home </a>
+      </div>
+      <div class="menu-item">
+        <a href="/about"> About </a>
+
+        <div class="nav-children">
+          <a href="/about/history"> History </a>
+          <a href="/about/location"> Location </a>
+        </div>
+      </div>
+    </nav>
+
+    <!-- Menu Item aligned-right and still shown on mobile -->
+    <div class="nav-extra">
+      <form class="menu-item search-form" method="get" action="/search">
+        <input id="search" type="search" name="s" placeholder="Search">
+        <label for="search" class="search-toggle"> <i class="dashicons-before dashicons-search"></i> </label>
+      </form>
+    </div>
+
+</h-column></h-row>
+</section>
+
+<!-- MAIN SHELL -->
 <div id="main-wrapper">
 
-  <!-- CONTENT HERE -->
-  <h1>Hello World</h1>
+  <h-row>
+    <h-column class="large-12">
+      <h1>Hello World</h1>
+    </h-column>
+  </h-row>
 
-  <div id="footer-push"></div>
 </div>
-<footer class="main-footer"></footer>
+
+<footer class="main-footer">
+
+</footer>
 
 <!-- JAVASCRIPT LIBRARY -->
-<script src="assets/js-vendor/jquery.min.js"></script>
-<script src="assets/js-vendor/fastclick.min.js"></script>
-<script src="assets/js-vendor/handlebars.min.js"></script>
-<script src="assets/js/app.js"></script>
+<!-- <script src="/assets/js-vendor/jquery.min.js"></script> -->
+<!-- <script src="/assets/js-vendor/fastclick.min.js"></script>
+<script src="/assets/js-vendor/handlebars.min.js"></script> -->
+<!-- <script src="/assets/js/app.js"></script> -->
+<!-- <script src="/assets/js/app-pwa.js"></script> -->
+
+<script>
+  if('serviceWorker' in navigator) {
+    navigator.serviceWorker.register('/sw.js', { scope: '/' })
+      .then(function(registration) {
+            console.log('Service Worker Registered');
+      });
+
+    navigator.serviceWorker.ready.then(function(registration) {
+       console.log('Service Worker Ready');
+    });
+  }
+</script>
 
 </body>
 </html>
