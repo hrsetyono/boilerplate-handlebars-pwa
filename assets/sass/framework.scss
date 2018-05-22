@@ -1,0 +1,115 @@
+// Put styles that you might reuse in other projects here
+@import "setting";
+$output-framework: true;
+@import "edje-v15";
+
+
+.text-left { text-align: left; }
+.text-center { text-align: center; }
+.text-right { text-align: right; }
+
+
+///// FONT /////
+
+/*
+@include font-faces("Font Name", (
+  ("font.woff", 400),
+  ("font-italic.woff", 400, italic),
+  ("font-bold.woff", 700), // always append comma
+));
+*/
+
+///// BUTTON /////
+
+button,
+.button,
+a.button,
+[type="submit"] {
+  display: inline-block;
+  outline: none;
+  padding: 6px 16px 8px;
+  border: 1px solid $color-main;
+  background-color: $color-main;
+  color: white;
+  text-decoration: none;
+
+  border-radius: 24px;
+  transition: none;
+
+  &:hover {
+    background-color: $color-main-dark;
+    color: white;
+  }
+
+  &:active {
+    box-shadow: inset 0 0 0 1px white;
+  }
+}
+
+
+///// INPUT /////
+
+[type="text"],
+[type="number"],
+[type="tel"],
+[type="password"],
+[type="email"],
+[type="search"],
+[type="url"],
+textarea,
+select {
+  display: block;
+  width: 100%;
+  padding: 0.5em 0.75em;
+  border: 1px solid $color-passive;
+  border-top-color: darken($color-passive, 5%);
+  border-radius: $g-radius;
+  line-height: normal;
+
+  &:hover {
+    border-color: darken($color-passive, 10%);
+    box-shadow: inset 0 0 3px $color-passive;
+  }
+
+  &:focus {
+    border-color: $color-main;
+    box-shadow: inset 0 1px 2px rgba(black, .2);
+  }
+}
+
+input[type="radio"],
+input[type="checkbox"] {
+  cursor: pointer;
+  border: 1px solid rgba(black, .2);
+  width: 16px;
+  height: 16px;
+  vertical-align: middle;
+
+  transition: $g-transition;
+  appearance: none;
+  -moz-appearance: none;
+  -webkit-appearance: none;
+
+
+  &:hover {
+    border-color: $color-main;
+  }
+
+  &:checked {
+    border-color: $color-main;
+    box-shadow: inset 0 0 0 4.5px $color-main;
+  }
+
+  + label,
+  + span {
+    margin-left: 0.5em;
+  }
+}
+
+input[type="checkbox"] {
+  border-radius: $g-radius;
+}
+
+input[type="radio"] {
+  border-radius: 50%;
+}
