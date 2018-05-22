@@ -18,8 +18,8 @@
 
   <!-- FAVICON -->
   <link rel="icon" href="/assets/images/icon-128x128.png">
-  <!-- <link rel="apple-touch-icon" href="/assets/images/icon-192x192.png">
-  <link rel="apple-touch-icon-precomposed" href="/assets/images/icon-192x192.png"> -->
+  <link rel="apple-touch-icon" href="/assets/images/icon-192x192.png">
+  <link rel="apple-touch-icon-precomposed" href="/assets/images/icon-192x192.png">
 
   <!-- STYLESHEET -->
   <link rel="stylesheet" href="/assets/css/framework.css">
@@ -75,8 +75,9 @@
 <div id="main-wrapper">
 
   <h-row>
-    <h-column class="large-12">
+    <h-column class="large-6">
       <h1>Hello World</h1>
+      <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit. Facilis blanditiis quam quasi qui optio, inventore labore nobis rem atque maxime!</p>
     </h-column>
   </h-row>
 
@@ -87,24 +88,12 @@
 </footer>
 
 <!-- JAVASCRIPT LIBRARY -->
-<!-- <script src="/assets/js-vendor/jquery.min.js"></script> -->
+<script src="/assets/js-vendor/jquery.min.js"></script>
 <!-- <script src="/assets/js-vendor/fastclick.min.js"></script>
 <script src="/assets/js-vendor/handlebars.min.js"></script> -->
-<!-- <script src="/assets/js/app.js"></script> -->
-<!-- <script src="/assets/js/app-pwa.js"></script> -->
+<script src="/assets/js/app.js"></script>
+<script src="/assets/js/app-pwa.js"></script>
 
-<script>
-  if('serviceWorker' in navigator) {
-    navigator.serviceWorker.register('/sw.js', { scope: '/' })
-      .then(function(registration) {
-            console.log('Service Worker Registered');
-      });
-
-    navigator.serviceWorker.ready.then(function(registration) {
-       console.log('Service Worker Ready');
-    });
-  }
-</script>
 
 </body>
 </html>
