@@ -6,7 +6,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1">
 
   <!-- WEBSITE DETAIL -->
-  <title>My Website</title>
+  <title>My Web App</title>
   <meta name="description" content="This is a description of your website, only first 160 characters matters">
 
   <!-- PWA Setting -->
@@ -14,7 +14,7 @@
   <meta name="theme-color" content="#3a2c3d">
   <meta name="apple-mobile-web-app-capable" content="yes">
   <meta name="apple-mobile-web-app-status-bar-style" content="black">
-  <meta name="apple-mobile-web-app-title" content="Noble Court">
+  <meta name="apple-mobile-web-app-title" content="My Web App">
 
   <!-- FAVICON -->
   <link rel="icon" href="/assets/images/icon-128x128.png">
@@ -24,7 +24,6 @@
   <!-- STYLESHEET -->
   <link rel="stylesheet" href="/assets/css/framework.css">
   <link rel="stylesheet" href="/assets/css/app.css">
-  <link rel="stylesheet" href="/assets/css/dashicons.css">
 
 </head>
 <body>
@@ -38,13 +37,6 @@
       </a>
     </div>
 
-    <!-- Mobile toggle -->
-    <div id="nav-toggle" class="menu-item nav-toggle">
-      <a>
-        <i class="dashicons-before dashicons-menu"></i> Menu
-      </a>
-    </div>
-
     <!-- Menu Item (make this dynamic) -->
     <nav class="nav-wrapper">
       <div class="menu-item current-menu-item">
@@ -52,11 +44,6 @@
       </div>
       <div class="menu-item">
         <a href="/about"> About </a>
-
-        <div class="nav-children">
-          <a href="/about/history"> History </a>
-          <a href="/about/location"> Location </a>
-        </div>
       </div>
     </nav>
 
@@ -72,28 +59,118 @@
 </section>
 
 <!-- MAIN SHELL -->
+
 <div id="main-wrapper">
-
-  <h-row>
-    <h-column class="large-6">
-      <h1>Hello World</h1>
-      <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit. Facilis blanditiis quam quasi qui optio, inventore labore nobis rem atque maxime!</p>
-    </h-column>
-  </h-row>
-
 </div>
 
-<footer class="main-footer">
-
-</footer>
 
 <!-- JAVASCRIPT LIBRARY -->
 <script src="/assets/js-vendor/jquery.min.js"></script>
-<!-- <script src="/assets/js-vendor/fastclick.min.js"></script>
-<script src="/assets/js-vendor/handlebars.min.js"></script> -->
-<script src="/assets/js/app.js"></script>
-<script src="/assets/js/app-pwa.js"></script>
+<script src="/assets/js-vendor/fastclick.min.js"></script>
+<script src="/assets/js-vendor/handlebars.min.js"></script>
+<script src="/assets/js-vendor/localforage.min.js"></script>
+<script src="/assets/js-vendor/moment.min.js"></script>
+<script src="/assets/js-vendor/navigo.min.js"></script>
 
+<script src="/assets/js/handlebars-setting.js"></script>
+<script src="/assets/js/route.js"></script>
+<script src="/assets/js/api.js"></script>
+<script src="/assets/js/app.js"></script>
+
+
+<!-- HANDLEBARS TEMPLATE -->
+
+<script id="template--posts" type="text/x-handlebars-template">
+  <h-row class="post-row"><h-column class="post-col">
+  {{#each this }}
+  <article class="post-tease post-content">
+    {{#if featured_image }}
+      <figure>
+        <img width="200" src="{{ featured_image }}" alt="{{ title }}">
+      </figure>
+    {{/if }}
+
+    <div class="tease-body">
+      <a href="/posts/{{ ID }}">
+        <h3>{{ title }}</h3>
+        {{{ excerpt }}}
+      </a>
+
+      {{> postMeta this }}
+
+    </div>
+  </article>
+  {{/each }}
+  </h-column></h-row>
+</script>
+
+<script id="partial--post-meta" type="text/x-handlebars-template">
+
+  <div class="post-meta">
+    <a class="meta-category" href="/categories/{{ terms.category.slug }}">
+      <strong>{{ terms.category.name }}</strong>
+    </a>
+    by {{ author.name }}
+
+    <time>{{formatDate date }}</time>
+  </div>
+
+</script>
+
+
+<script id="template--post" type="text/x-handlebars-template">
+  <section class="post-banner"
+    style="background-image: url('{{ post_thumbnail.URL }}');">
+  </section>
+
+
+  <h-row class="post-row"><h-column class="post-col">
+
+    <article class="post-content">
+      <header class="post-header">
+        <h1>{{ title }}</h1>
+        {{> postMeta this }}
+      </header>
+
+      <section class="post-body">
+        {{{ content }}}
+      </section>
+
+      <footer class="post-author">
+        <figure class="author-image">
+          <img src="{{ author.avatar_URL }}" alt="{{ author.name }}">
+        </figure>
+
+        <div class="author-text">
+          <h4>{{ author.name }}</h4>
+          <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit. Libero iste, nisi recusandae.</p>
+
+          <p><a href="{{ author.URL }}" class="author-url">
+            {{ author.URL }}
+          </a></p>
+        </div>
+      </footer>
+    </article>
+
+  </h-column></h-row>
+</script>
+
+
+
+<script id="template--page" type="text/x-handlebars-template">
+  <h-row><h-column class="large-10 centered">
+
+  <article class="post-content">
+    <header>
+      <h1>{{ title }}</h1>
+    </header>
+    <section>
+      {{{ content }}}
+    </section>
+  </article>
+
+  </h-column></h-row>
+</script>
 
 </body>
 </html>

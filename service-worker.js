@@ -3,26 +3,30 @@
 // https://developers.google.com/web/fundamentals/instant-and-offline/offline-cookbook/
 'use strict';
 
-const VERSION = "0.1.0";
-const CACHE_NAME = `my-app-${VERSION}`;
+const VERSION = '0.1.0';
+const CACHE_NAME = 'my-app-' + VERSION;
 
 var filesToCache = [
   '/',
   '/index.html',
 
   '/assets/js/app.js',
-  '/assets/js/app-pwa.js',
+  '/assets/js/api.js',
+  '/assets/js/handlebars-setting.js',
+  '/assets/js/route.js',
+
   '/assets/js-vendor/jquery.min.js',
-  // '/assets/js-vendor/handlebars.min.js',
-  // '/assets/js-vendor/fastclick.min.js',
+  '/assets/js-vendor/handlebars.min.js',
+  '/assets/js-vendor/fastclick.min.js',
+  '/assets/js-vendor/localforage.min.js',
+  '/assets/js-vendor/moment.min.js',
+  '/assets/js-vendor/navigo.min.js',
 
   '/assets/css/app.css',
   '/assets/css/framework.css',
-  '/assets/css/dashicons.css',
 
   '/assets/images/loading.gif',
   '/assets/images/icon-128x128.png',
-  '/assets/images/icon-splash-512x512.jpg',
 ];
 
 

@@ -78,25 +78,6 @@
   flex-wrap: wrap;
   flex: 1;
 
-  @include below(small) {
-    flex-direction: column;
-    visibility: hidden;
-    opacity: 0;
-
-    position: fixed;
-    z-index: z(nav);
-    top: 0;
-    left: 0;
-    bottom: 0;
-    padding: 3.5em 0 2em;
-    width: 180px;
-    background-color: white;
-
-    transition: $g-transition;
-    box-shadow: $shadow-z2;
-    @include transform(translateX(-100%) );
-  }
-
   .nav-is-active & {
     visibility: visible;
     opacity: 1;

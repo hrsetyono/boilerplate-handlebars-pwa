@@ -1,0 +1,1 @@
+#main-wrapper.is-loading::before { content: ""; position: fixed; z-index: 100; top: 0; left: 0; right: 0; bottom: 0; background-color: rgba(255, 255, 255, 0.7); background-image: url("../images/loading.gif"); background-repeat: no-repeat; background-position: center center; }

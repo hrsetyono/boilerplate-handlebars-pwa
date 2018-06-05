@@ -1,3 +1,20 @@
 // Put styles that are unique for this project here
 @import "setting";
 @import "edje-v15";
+
+#main-wrapper.is-loading {
+  &::before {
+    content: "";
+    position: fixed;
+    z-index: 100;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+
+    background-color: rgba(white, .7);
+    background-image: image-url('loading.gif');
+    background-repeat: no-repeat;
+    background-position: center center;
+  }
+}
