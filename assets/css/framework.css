@@ -500,9 +500,11 @@ img.hide-for-small, img.hide-for-mini, img.show-for-large, span.hide-for-small, 
   h-row { min-width: 1140px; }
   h-row h-row { min-width: 0; } }
 
-.main-nav { position: relative; z-index: 1010; border-bottom: 1px solid #c8d7e1; }
+.main-nav { position: relative; z-index: 1010; background-color: #00aadc; border-bottom: 1px solid #c8d7e1; }
 
 @media (min-width: 768px) { .main-nav { padding: 0.75em 0; } }
+
+.main-nav a { color: white; }
 
 .nav-col { width: 100%; display: -webkit-flex; display: flex; justify-content: flex-start; align-items: center; }
 
@@ -518,11 +520,11 @@ img.hide-for-small, img.hide-for-mini, img.show-for-large, span.hide-for-small, 
 
 .menu-item { position: relative; }
 
-.menu-item > a { display: block; padding: 0.75em 1em; color: #2e4453; transition: none; }
+.menu-item > a { display: block; padding: 0.75em 1em; transition: none; }
 
 .menu-item > a:hover { opacity: .7; }
 
-.menu-item.current-menu-item > a, .menu-item.current-page-ancestor > a, .menu-item.current-menu-ancestor > a, .menu-item.current-menu-parent > a { color: #00aadc; }
+.menu-item.current-menu-item > a, .menu-item.current-page-ancestor > a, .menu-item.current-menu-ancestor > a, .menu-item.current-menu-parent > a { font-weight: 700; }
 
 .nav-wrapper { display: -webkit-flex; display: flex; justify-content: flex-start; flex-wrap: wrap; flex: 1; }
 
@@ -1227,3 +1229,9 @@ input[type="radio"] + label, input[type="radio"] + span, input[type="checkbox"] 
 input[type="checkbox"] { border-radius: 4px; }
 
 input[type="radio"] { border-radius: 50%; }
+
+.toast { position: fixed; z-index: 1; left: 50%; bottom: 10px; -webkit-transform: translateX(-50%) translateY(-20px); -ms-transform: translateX(-50%) translateY(-20px); transform: translateX(-50%) translateY(-20px); display: -ms-flexbox; display: -webkit-flex; display: flex; visibility: hidden; opacity: 0; min-width: 320px; max-width: 480px; padding: 1em; background-color: #333; color: white; text-align: center; border-radius: 4px; transition: all 0.25s ease-out; box-shadow: 0 1.5px 4px rgba(0, 0, 0, 0.24), 0 1.5px 6px rgba(0, 0, 0, 0.12); }
+
+.toast.toast--shown { visibility: visible; opacity: 1; -webkit-transform: translateX(-50%); -ms-transform: translateX(-50%); transform: translateX(-50%); }
+
+.toast a { margin-left: auto; }

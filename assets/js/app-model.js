@@ -1,9 +1,14 @@
+/*
+  Handle API call and Cache get/set
+*/
+
 const API_BASE = 'https://public-api.wordpress.com/rest/v1.1/sites/hrsetyono.wordpress.com';
 
 /*
   Data Repository. Get data from cache, if empty, do API call.
 
-  To use this, create new class and extend this.
+  To use this, create new class and extend it.
+  
 */
 class MyRepo {
   constructor( endpoint, cacheKey ) {
@@ -12,13 +17,14 @@ class MyRepo {
   }
 
   get() {
-    return localforage.getItem( this.cacheKey ).then( data => {
-      if( data === null ) {
-        return this.set(); // if data is empty, fetch new one
-      }
-
-      return data;
-    } );
+    return localforage.getItem( this.cacheKey )
+      .then( data => {
+        // if data is empty, fetch new one
+        if( data === null ) {
+          return this.set();
+        }
+        return data;
+      });
   }
 
 
@@ -92,15 +98,11 @@ class PageRepo extends MyRepo {
 
 /*
   Simple GET and POST functions that return Promise.
+
   Example:
 
-    MY_API.get( url ).then( result => {
-      ...
-    });
-
-    MY_API.post( url, data ).then( result => {
-      ...
-    });
+    MY_API.get( url ).then( result => { .. } );
+    MY_API.post( url, data ).then( result => { ... } );
 */
 const MY_API={get(endpoint){return window.fetch(endpoint,{method:'GET',headers:{'Accept':'application/json'}}).then(this._handleError).then(this._handleContentType).catch(error=>{throw new Error(error)})},post(endpoint,body){return window.fetch(endpoint,{method:'POST',headers:{'Content-Type':'application/json'},body:body,}).then(this._handleError).then(this._handleContentType).catch(error=>{throw new Error(error)})},_handleError(err){return err.ok?err:Promise.reject(err.statusText)},_handleContentType(res){const contentType=res.headers.get('content-type');if(contentType&&contentType.includes('application/json')){return res.json()}
 return Promise.reject('Oops, we haven\'t got JSON!')},}

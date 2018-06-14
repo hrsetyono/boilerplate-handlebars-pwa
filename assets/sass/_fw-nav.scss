@@ -1,10 +1,15 @@
 .main-nav {
   position: relative;
   z-index: z(nav);
+  background-color: $color-main;
   border-bottom: 1px solid $color-passive;
 
   @include above(small) {
     padding: 0.75em 0;
+  }
+
+  a {
+    color: white;
   }
 }
 
@@ -56,7 +61,6 @@
   > a {
     display: block;
     padding: 0.75em 1em;
-    color: $font-color;
     transition: none;
 
     &:hover { opacity: .7; }
@@ -67,7 +71,7 @@
   &.current-page-ancestor,
   &.current-menu-ancestor,
   &.current-menu-parent {
-    > a { color: $color-main; }
+    > a { font-weight: 700; }
   }
 }
 

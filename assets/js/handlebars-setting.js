@@ -25,7 +25,7 @@ const hbsHelpers = {
     // Format Date
     Handlebars.registerHelper( 'formatDate', function( dateString ) {
       return new Handlebars.SafeString(
-        moment( dateString ).format('DD MMM YYYY').toUpperCase()
+        fecha.format( new Date(dateString), 'DD MMM YYYY').toUpperCase()
       );
     });
   },

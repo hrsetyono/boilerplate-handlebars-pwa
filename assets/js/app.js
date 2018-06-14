@@ -7,6 +7,7 @@ $(window).load( startOnLoad );
 
 function start() {
   myApp.init();
+  new MyController(); // from app-controller.js
 }
 
 // functions that needs to run only after everything loads
@@ -19,19 +20,25 @@ function startOnLoad() {
 
 var myApp = {
   init() {
+    $('#nav-refresh').on( 'click', this.refreshCache );
   },
+
+  /*
+    Clear database and images. Static files should stay the same.
+  */
+  refreshCache( e ) {
+    localforage.clear(); // clear db
+
+    // clear images
+    caches.keys().then(function( allCaches ) {
+      allCaches.map( c => {
+        c.includes('image') ? caches.delete( c ) : '';
+      });
+    });
+
+    location.reload();
+  }
 };
 
 
-
-
 })( jQuery );
-
-
-
-///// SERVICE WORKER
-
-(function(){startServiceWorker();function startServiceWorker(){if('serviceWorker' in navigator){var workerArgs={scope:'/'};navigator.serviceWorker.register('/service-worker.js',workerArgs).then(onSuccess).catch(onFail);navigator.serviceWorker.ready.then(onReady)}
-function onSuccess(registration){console.log('Service Worker Registered')}
-function onFail(error){console.log('Service worker registration failed, error:',error)}
-function onReady(registration){console.log('Service Worker Ready')}}})()
