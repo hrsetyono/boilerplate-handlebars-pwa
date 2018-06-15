@@ -34,9 +34,9 @@ var myApp = {
       allCaches.map( c => {
         c.includes('image') ? caches.delete( c ) : '';
       });
+    }).then( () => {
+      location.reload();
     });
-
-    location.reload();
   }
 };
 
