@@ -31,13 +31,6 @@
 <!-- NAVIGATION -->
 <section class="main-nav">
   <h-row><h-column class="nav-col">
-    <!-- Logo -->
-    <div class="nav-logo">
-      <a href="/" class="custom-logo-link">
-        <img src="/assets/images/icon-128x128.png" class="custom-logo" itemprop="logo">
-      </a>
-    </div>
-
     <!-- Menu Item (make this dynamic) -->
     <nav class="nav-wrapper">
       <div class="menu-item current-menu-item">
@@ -98,9 +91,10 @@
 
     <div class="tease-body">
       <a href="/posts/{{ ID }}">
-        <h3>{{ title }}</h3>
-        {{{ excerpt }}}
+        <h3>{{ title }} »</h3>
       </a>
+
+      {{{ excerpt }}}
 
       {{> postMeta this }}
 

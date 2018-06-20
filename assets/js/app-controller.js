@@ -46,8 +46,8 @@ function postController( params ) {
   Single Page
 */
 function pageController( params ) {
-  let pageRepo = new PageRepo( params.slug );
-  pageRepo.get().then( data => {
+  let pageModel = new PageModel( params.slug );
+  pageModel.get().then( data => {
 
     var html = $('#template--page').compile( data );
     $( '#main-wrapper' ).html( html );
