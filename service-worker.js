@@ -15,16 +15,18 @@ var staticFiles = [
   '/',
   '/index.html',
 
-  '/assets/js/framework.js',
+  '/assets/js/helpers.js',
+  '/assets/js/hbs-helpers.js',
   '/assets/js/app.js',
   '/assets/js/app-model.js',
   '/assets/js/app-controller.js',
-  '/assets/js/handlebars-setting.js',
-  '/assets/js/route.js',
+  '/assets/js/app-worker.js',
 
   '/assets/js-vendor/jquery.min.js',
   '/assets/js-vendor/handlebars.min.js',
-  '/assets/js-vendor/bundle.min.js',
+  '/assets/js-vendor/fecha.min.js',
+  '/assets/js-vendor/localforage.min.js',
+  '/assets/js-vendor/navigo.min.js',
 
   '/assets/css/app.css',
   '/assets/css/framework.css',
@@ -86,7 +88,7 @@ function swFetch( e ) {
 
   // if request image, cache it
   if( requestUrl.href.includes( IMAGE_URL_INDICATOR ) ) {
-    e.respondWith( _cachePhoto( e.request) );
+    e.respondWith( _cacheImage( e.request) );
     return;
   }
 
@@ -111,7 +113,7 @@ function swMessage( e ) {
 
 ///
 
-function _cachePhoto( request ) {
+function _cacheImage( request ) {
   var storageUrl = request.url.replace( /-\d+px\.jpg$/, '' );
 
   return caches.open( IMAGES_CACHE ).then( c => {
