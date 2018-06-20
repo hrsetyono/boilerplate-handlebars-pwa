@@ -7,7 +7,6 @@ $(window).load( startOnLoad );
 
 function start() {
   myApp.init();
-  new MyController(); // from app-controller.js
 }
 
 // functions that needs to run only after everything loads

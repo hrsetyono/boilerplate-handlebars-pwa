@@ -71,20 +71,21 @@
 <!-- JAVASCRIPT LIBRARY -->
 <script src="/assets/js-vendor/jquery.min.js"></script>
 <script src="/assets/js-vendor/handlebars.min.js"></script>
-<!-- Bundle contains: LocalForage, Fecha, Navigo -->
-<script src="/assets/js-vendor/bundle.min.js"></script>
+<script src="/assets/js-vendor/localforage.min.js"></script>
+<script src="/assets/js-vendor/fecha.min.js"></script>
+<script src="/assets/js-vendor/navigo.min.js"></script>
+<script src="/assets/js-vendor/handlebars.min.js"></script>
 
-<script src="/assets/js/handlebars-setting.js"></script>
-<script src="/assets/js/route.js"></script>
-
-<script src="/assets/js/framework.js"></script>
+<script src="/assets/js/hbs-helpers.js"></script>
+<script src="/assets/js/helpers.js"></script>
 <script src="/assets/js/app.js"></script>
+<script src="/assets/js/app-worker.js"></script>
 <script src="/assets/js/app-model.js"></script>
 <script src="/assets/js/app-controller.js"></script>
 
 
-<!-- HANDLEBARS TEMPLATE -->
 
+<!-- Posts listing for home page ( / ) -->
 <script id="template--posts" type="text/x-handlebars-template">
   <h-row class="post-row"><h-column class="post-col">
   {{#each this }}
@@ -109,20 +110,8 @@
   </h-column></h-row>
 </script>
 
-<script id="partial--post-meta" type="text/x-handlebars-template">
 
-  <div class="post-meta">
-    <a class="meta-category" href="/categories/{{ terms.category.slug }}">
-      <strong>{{ terms.category.name }}</strong>
-    </a>
-    by {{ author.name }}
-
-    <time>{{formatDate date }}</time>
-  </div>
-
-</script>
-
-
+<!-- Single post ( /posts/:id ) -->
 <script id="template--post" type="text/x-handlebars-template">
   <section class="post-banner"
     style="background-image: url('{{ post_thumbnail.URL }}');">
@@ -161,7 +150,7 @@
 </script>
 
 
-
+<!-- Single page ( /:slug ) -->
 <script id="template--page" type="text/x-handlebars-template">
   <h-row><h-column class="large-10 centered">
 
@@ -176,6 +165,21 @@
 
   </h-column></h-row>
 </script>
+
+<!-- Partials -->
+<script id="partial--post-meta" type="text/x-handlebars-template">
+
+  <div class="post-meta">
+    <a class="meta-category" href="/categories/{{ terms.category.slug }}">
+      <strong>{{ terms.category.name }}</strong>
+    </a>
+    by {{ author.name }}
+
+    <time>{{formatDate date }}</time>
+  </div>
+
+</script>
+
 
 </body>
 </html>
