@@ -3,7 +3,7 @@
 // https://developers.google.com/web/fundamentals/instant-and-offline/offline-cookbook/
 'use strict';
 
-const VERSION = '0.2.0';
+const VERSION = '0.2.3';
 const CACHE_BASE = 'my-app-';
 const STATIC_CACHE = CACHE_BASE + 'static-' + VERSION;
 const IMAGES_CACHE = CACHE_BASE + 'images';
@@ -51,10 +51,9 @@ self.addEventListener( 'notificationclick', swNotificationClick );
 */
 function swInstall( e ) {
   console.log( 'sw install' );
-  
+
   e.waitUntil(
-    caches.open( STATIC_CACHE )
-      .then( addCache )
+    caches.open( STATIC_CACHE ).then( addCache )
   );
 
   //
@@ -70,11 +69,11 @@ function swInstall( e ) {
 function swActivate( e ) {
   console.log( 'sw activate' );
   e.waitUntil(
-    caches.keys().then( deleteOldCache )
+    caches.keys().then( _deleteOldCache )
   );
 
   // remove old caches
-  function deleteOldCache( allCaches ) {
+  function _deleteOldCache( allCaches ) {
     return Promise.all(
       allCaches.filter( c => {
         return c.startsWith( CACHE_BASE ) && !ALL_CACHES.includes( c );
@@ -93,7 +92,6 @@ function swFetch( e ) {
 
   // if request image, cache it
   if( requestUrl.href.includes( IMAGE_URL_INDICATOR ) ) {
-    console.log( 'sw fetch image' );
     e.respondWith( _cacheImage( e.request) );
     return;
   }

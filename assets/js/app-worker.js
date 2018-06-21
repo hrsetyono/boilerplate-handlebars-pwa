@@ -39,23 +39,29 @@ class MyWorker {
       navigator.serviceWorker.ready.then( _onReady );
     });
 
+    // Ensure refresh is only called once.
+    // This works around a bug in "force update on reload".
+    var refreshing;
+    navigator.serviceWorker.addEventListener( 'controllerchange', () => {
+      if (refreshing) return;
+      window.location.reload();
+      refreshing = true;
+    });
+
     //
 
     function _addUpdateListener( reg ) {
       // if controller faulty, abandon code
-      // if( !navigator.serviceWorker.controller ) { return false; }
-      console.log( 'Service Worker Registered' );
+      if( !navigator.serviceWorker.controller ) { return; }
 
       // if new worker is detected
       if( reg.waiting ) {
-        console.log( 'waiting' );
         self._notifyUpdate( reg.waiting );
         return;
       }
 
       // if new worker finished is installing, track its progress
       if( reg.installing ) {
-        console.log( 'installing' );
         self._trackInstalling( reg.installing );
         return;
       }
