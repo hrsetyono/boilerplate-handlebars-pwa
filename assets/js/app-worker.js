@@ -1,40 +1,49 @@
+(function($) { 'use strict';
+
 /*
-  Handle ServiceWorker and other Network interaction
-  NOTE: Do not touch this file
+  PushNotification server's key
+  - You need to develop your own server and create the key
+  - For DEMO, get your key at https://web-push-codelab.glitch.me
+  - After allowing notification, you will see a JSON data in console, copy it to "Codelab Message Sending" and send test message.
 */
-(function($) {
-'use strict';
+const PUBLIC_KEY = 'BJS8GuQlCDavfpzsppGGECE_CjqFoLpvw2HespGY7lQ1lyyD1gMl546xUWg1dqhuHcWa5P5FPA-kcBFUcLIdLn4';
 
+// Start Service Worker
+window.addEventListener( 'load', start );
+function start() {
+  let myWorker = new MyWorker();
+  myWorker.registerServiceWorker();
+}
+
+/*
+  Start the Service Worker module
+*/
 class MyWorker {
-  constructor() {
-    // if serviceWorker isn't supported, abandon code
-    if ( !('serviceWorker' in navigator) ) { return false; }
-
-    this._registerServiceWorker();
-  }
+  constructor() { }
 
   /*
     Start Service Worker
+    @return Promise( swRegistration ) - after service worker is ready
   */
-  _registerServiceWorker() {
+  registerServiceWorker() {
+    if( !('serviceWorker' in navigator) ) { return false; }
     var self = this;
-    var reloading; // to detect controllerchange
 
-    navigator.serviceWorker.register( '/service-worker.js', { scope: '/' } )
-    .then( addUpdateListener )
-    .catch( onFail );
+    navigator.serviceWorker.register( '/service-worker.js' )
+      .then( _addUpdateListener )
+      .catch( error => {
+        console.log( 'Service worker registration failed, error:', error );
+      } );
 
-    navigator.serviceWorker.ready.then( onReady );
-
-    // TODO: works in live, but a nuisance when Force Reload is enabled during debugging.
-    // navigator.serviceWorker.addEventListener( 'controllerchange', onControllerChange );
+    setTimeout( () => {
+      navigator.serviceWorker.ready.then( _onReady );
+    });
 
     //
 
-    function addUpdateListener( reg ) {
+    function _addUpdateListener( reg ) {
       // if controller faulty, abandon code
-      if( !navigator.serviceWorker.controller ) { return; }
-
+      // if( !navigator.serviceWorker.controller ) { return false; }
       console.log( 'Service Worker Registered' );
 
       // if new worker is detected
@@ -53,32 +62,24 @@ class MyWorker {
 
       // listen for new workers installing, track its progress
       reg.addEventListener( 'updatefound', () => {
-        console.log( 'update found' );
         self._trackInstalling( reg.installing );
       });
     }
 
-    function onFail( error ) {
-      console.log( 'Service worker registration failed, error:', error );
-    }
 
-    function onReady( reg ) {
+    function _onReady( reg ) {
       console.log( 'Service Worker Ready' );
-    }
 
-    /*
-      Reload page if new service worker is installed
-    */
-    function onControllerChange() {
-      if( reloading ) { return false; } // ensure reload only called once
-      window.location.reload();
-      reloading = true;
+      // register push notification
+      let myNotif = new MyPushNotification( reg );
+      myNotif.subscribe();
     }
   }
 
+  //
+
   /*
     Notify user about update
-
     @param worker - The new service worker object
   */
   _notifyUpdate( worker ) {
@@ -95,7 +96,6 @@ class MyWorker {
 
   /*
     Listen when new worker finished installing
-
     @param worker - The new service worker object
   */
   _trackInstalling( worker ) {
@@ -107,6 +107,87 @@ class MyWorker {
   }
 }
 
-new MyWorker();
+
+/*
+  Push Notification
+
+  @param ServiceWorkerRegistration
+*/
+class MyPushNotification {
+  constructor( reg ) {
+    this.reg = reg;
+  }
+
+  /*
+    Prompt user to allow notification
+  */
+  subscribe() {
+    if( !('PushManager' in window) ) { return false; }
+
+    // check if already subscribed
+    this._checkSubscription()
+      .then( isSubscribed => {
+        if( isSubscribed ) { throw new Error( 'User already subscribed' ); }
+
+        const serverKey = this._urlB64ToUint8Array( PUBLIC_KEY );
+        // prompt user to allow / block
+        return this.reg.pushManager.subscribe({
+          userVisibleOnly: true,
+          applicationServerKey: serverKey
+        });
+      })
+      // update server after finish subscribing
+      .then( sub => {
+        console.log( 'Push Notification Subscribed' );
+        this._updateServer( sub );
+      })
+      .catch( error => console.log( error ) );
+  }
+
+
+  //
+
+  /*
+    Check current state of subscription
+  */
+  _checkSubscription() {
+    return this.reg.pushManager.getSubscription()
+      .then( sub => {
+        this._updateServer( sub );
+        return sub !== null;
+      });
+  }
+
+  /*
+    Save latest subscriber to server
+    TODO: Make this send a POST request to server
+  */
+  _updateServer( sub ) {
+    if( sub ) {
+      console.log( JSON.stringify( sub ) );
+    } else {
+      console.log( 'Subscription does not exist' );
+    }
+  }
+
+
+  /*
+    Convert Server Key
+  */
+  _urlB64ToUint8Array( base64String ) {
+    const padding = '='.repeat( (4 - base64String.length % 4) % 4 );
+    const base64 = ( base64String + padding )
+      .replace(/\-/g, '+')
+      .replace(/_/g, '/');
+
+    const rawData = window.atob( base64 );
+    const outputArray = new Uint8Array( rawData.length );
+
+    for( let i = 0; i < rawData.length; ++i ) {
+      outputArray[ i ] = rawData.charCodeAt( i );
+    }
+    return outputArray;
+  }
+}
 
 })( jQuery );

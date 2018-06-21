@@ -3,7 +3,7 @@
 // https://developers.google.com/web/fundamentals/instant-and-offline/offline-cookbook/
 'use strict';
 
-const VERSION = '0.1.10';
+const VERSION = '0.2.0';
 const CACHE_BASE = 'my-app-';
 const STATIC_CACHE = CACHE_BASE + 'static-' + VERSION;
 const IMAGES_CACHE = CACHE_BASE + 'images';
@@ -12,7 +12,6 @@ const ALL_CACHES = [ STATIC_CACHE, IMAGES_CACHE ];
 const IMAGE_URL_INDICATOR = 'files.wordpress.com'; // part of URL that indicate it's image request
 
 var staticFiles = [
-  '/',
   '/index.html',
 
   '/assets/js/helpers.js',
@@ -41,6 +40,9 @@ self.addEventListener( 'activate', swActivate );
 self.addEventListener( 'fetch', swFetch );
 
 self.addEventListener( 'message', swMessage );
+self.addEventListener( 'push', swPush );
+self.addEventListener( 'notificationclick', swNotificationClick );
+
 
 /////
 
@@ -48,6 +50,8 @@ self.addEventListener( 'message', swMessage );
   When Service Worker finished installing
 */
 function swInstall( e ) {
+  console.log( 'sw install' );
+  
   e.waitUntil(
     caches.open( STATIC_CACHE )
       .then( addCache )
@@ -64,6 +68,7 @@ function swInstall( e ) {
   When Service Worker has been activated
 */
 function swActivate( e ) {
+  console.log( 'sw activate' );
   e.waitUntil(
     caches.keys().then( deleteOldCache )
   );
@@ -88,13 +93,14 @@ function swFetch( e ) {
 
   // if request image, cache it
   if( requestUrl.href.includes( IMAGE_URL_INDICATOR ) ) {
+    console.log( 'sw fetch image' );
     e.respondWith( _cacheImage( e.request) );
     return;
   }
 
+  // return cache, if not available then get from online
   e.respondWith(
     caches.match( e.request ).then( response => {
-      // return cache, if not available then get from online
       return response || fetch( e.request );
     } )
   );
@@ -110,8 +116,43 @@ function swMessage( e ) {
   }
 }
 
+/*
+  Listen for Push notification
+*/
+function swPush( e ) {
+  console.log( '[Service Worker] Push Received.' );
+
+  var data = e.data.json();
+  console.log( data );
+
+  const title = 'Test Push';
+  const options = {
+    body: 'Yay it works.',
+    icon: 'assets/images/icon.png',
+    badge: 'assets/images/badge.png'
+  };
+
+  e.waitUntil(
+    self.registration.showNotification( title, options )
+  );
+}
+
+/*
+  Listener when Notification is clicked
+*/
+function swNotificationClick( e ) {
+  console.log( '[Service Worker] Notification click Received.' );
+  e.notification.close();
+
+  // DO Something
+  e.waitUntil(
+    clients.openWindow('https://developers.google.com/web/')
+  );
+}
+
 
 ///
+
 
 function _cacheImage( request ) {
   var storageUrl = request.url.replace( /-\d+px\.jpg$/, '' );
