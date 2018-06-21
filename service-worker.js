@@ -28,7 +28,6 @@ var staticFiles = [
   '/assets/js-vendor/navigo.min.js',
 
   '/assets/css/app.css',
-  '/assets/css/framework.css',
 
   '/assets/images/loading.gif',
   '/assets/images/icon-128x128.png',

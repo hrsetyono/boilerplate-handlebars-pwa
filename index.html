@@ -22,34 +22,30 @@
   <link rel="apple-touch-icon-precomposed" href="/assets/images/icon-192x192.png">
 
   <!-- STYLESHEET -->
-  <link rel="stylesheet" href="/assets/css/framework.css">
+  <!-- <link rel="stylesheet" href="/assets/css/framework.css"> -->
   <link rel="stylesheet" href="/assets/css/app.css">
   <link rel="stylesheet" href="/assets/css/dashicons.css">
 
 </head>
 <body>
 <!-- NAVIGATION -->
-<section class="main-nav">
-  <h-row><h-column class="nav-col">
-    <!-- Menu Item (make this dynamic) -->
-    <nav class="nav-wrapper">
-      <div class="menu-item current-menu-item">
-        <a href="/"> Home </a>
-      </div>
-      <div class="menu-item">
-        <a href="/about"> About </a>
-      </div>
-    </nav>
+<nav class="main-nav">
+  <!-- Menu Item (make this dynamic) -->
+  <ul class="nav-wrapper">
+    <li>
+      <a href="/"> Home </a>
+    </li>
+    <li>
+      <a href="/about"> About </a>
+    </li>
+  </ul>
 
-    <!-- Menu Item aligned-right and still shown on mobile -->
-    <div class="nav-extra">
-      <a class="menu-item" id="nav-refresh">
-        <i class="dashicons-before dashicons-image-rotate"></i> Refresh
-      </a>
-    </div>
+  <button id="nav-refresh">
+    <i class="dashicons-before dashicons-image-rotate"></i> Refresh
+  </button>
+</nav>
 
-</h-column></h-row>
-</section>
+<hr>
 
 <!-- MAIN SHELL -->
 
@@ -80,97 +76,70 @@
 
 <!-- Posts listing for home page ( / ) -->
 <script id="template--posts" type="text/x-handlebars-template">
-  <h-row class="post-row"><h-column class="post-col">
   {{#each this }}
-  <article class="post-tease post-content">
+  <article>
     {{#if featured_image }}
       <figure>
-        <img width="200" src="{{ featured_image }}" alt="{{ title }}">
+        <img width="300" src="{{ featured_image }}" alt="{{ title }}">
       </figure>
     {{/if }}
 
-    <div class="tease-body">
-      <a href="/posts/{{ ID }}">
-        <h3>{{ title }} »</h3>
-      </a>
+    <a href="/posts/{{ ID }}">
+      <h2>{{ title }} »</h2>
+    </a>
 
-      {{{ excerpt }}}
-
-      {{> postMeta this }}
-
-    </div>
+    {{{ excerpt }}}
+    {{> postMeta this }}
   </article>
+  <hr>
   {{/each }}
-  </h-column></h-row>
 </script>
 
 
 <!-- Single post ( /posts/:id ) -->
 <script id="template--post" type="text/x-handlebars-template">
-  <section class="post-banner"
-    style="background-image: url('{{ post_thumbnail.URL }}');">
-  </section>
+  <img src="{{ post_thumbnail.URL }}">
 
+  <article>
+    <header>
+      <h1>{{ title }}</h1>
+      {{> postMeta this }}
+    </header>
+    <hr>
 
-  <h-row class="post-row"><h-column class="post-col">
+    {{{ content }}}
 
-    <article class="post-content">
-      <header class="post-header">
-        <h1>{{ title }}</h1>
-        {{> postMeta this }}
-      </header>
-
-      <section class="post-body">
-        {{{ content }}}
-      </section>
-
-      <footer class="post-author">
-        <figure class="author-image">
-          <img src="{{ author.avatar_URL }}" alt="{{ author.name }}">
-        </figure>
-
-        <div class="author-text">
-          <h4>{{ author.name }}</h4>
-          <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit. Libero iste, nisi recusandae.</p>
-
-          <p><a href="{{ author.URL }}" class="author-url">
-            {{ author.URL }}
-          </a></p>
-        </div>
-      </footer>
-    </article>
-
-  </h-column></h-row>
+    <hr>
+    <footer class="author">
+      <img src="{{ author.avatar_URL }}" alt="{{ author.name }}">
+      <h4>Written by {{ author.name }}</h4>
+      <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit. Libero iste, nisi recusandae.</p>
+      <a href="{{ author.URL }}">{{ author.URL }}</a>
+    </footer>
+  </article>
 </script>
 
 
 <!-- Single page ( /:slug ) -->
 <script id="template--page" type="text/x-handlebars-template">
-  <h-row><h-column class="large-10 centered">
 
-  <article class="post-content">
-    <header>
-      <h1>{{ title }}</h1>
-    </header>
-    <section>
-      {{{ content }}}
-    </section>
+  <article>
+    <header> <h1>{{ title }}</h1> </header>
+    {{{ content }}}
   </article>
-
-  </h-column></h-row>
+  
 </script>
 
 <!-- Partials -->
 <script id="partial--post-meta" type="text/x-handlebars-template">
 
-  <div class="post-meta">
-    <a class="meta-category" href="/categories/{{ terms.category.slug }}">
+  <aside>
+    <a href="/categories/{{ terms.category.slug }}">
       <strong>{{ terms.category.name }}</strong>
     </a>
     by {{ author.name }}
-
     <time>{{formatDate date }}</time>
-  </div>
+  </aside>
 
 </script>
 

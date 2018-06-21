@@ -1,0 +1,248 @@
+/* ----------
+  Normalize
+---------- */
+
+*,
+*:before,
+*:after {
+  -webkit-box-sizing: border-box;
+  -moz-box-sizing: border-box;
+  box-sizing: border-box;
+}
+
+html {
+  font-family: sans-serif;
+  -webkit-text-size-adjust: 100%;
+  -ms-text-size-adjust: 100%;
+}
+
+// Basic reset margin and padding
+*, body {
+  margin: 0;
+  padding: 0;
+}
+
+// Correct `block` display
+article,
+aside,
+details,
+figcaption,
+figure,
+footer,
+header,
+hgroup,
+main,
+nav,
+section,
+summary {
+  display: block;
+}
+
+
+// Correct `inline-block` display
+audio,
+canvas,
+progress,
+video {
+  display: inline-block;
+}
+audio:not([controls]) {
+  display: none;
+  height: 0;
+}
+
+// Webkit sibling selector fix
+body { -webkit-animation: bugfix infinite 1s; }
+@-webkit-keyframes bugfix {
+  from { padding: 0; }
+  to { padding: 0; }
+}
+
+// Reset anchor styling
+a {
+  cursor: pointer;
+  text-decoration: none;
+  background-color: transparent;
+
+  // &:focus { outline: none; }
+  &:active, &:hover { outline: 0; }
+}
+
+// Basic typography
+b, strong { font-weight: bold; }
+em { font-style: italic; }
+
+h1, h2, h3, h4, h5, h6 {
+  margin: 0.67em 0;
+}
+
+p {
+  margin-bottom: 1.5em;
+}
+
+// Media
+img {
+  border: 0;
+  display: inline-block;
+  vertical-align: middle;
+  max-width: 100%;
+  -ms-interpolation-mode: bicubic;
+}
+svg:not(:root) { overflow: hidden; }
+figure { margin: 0; max-width: 100%; }
+.wp-caption { width: auto !important; }
+
+// A better looking default horizontal rule
+hr {
+  -moz-box-sizing: content-box;
+  box-sizing: content-box;
+  display: block;
+  height: 1px;
+  margin: 1em 0;
+  padding: 0;
+  border: 0;
+  border-top: 1px solid #ccc;
+}
+
+// Code block
+pre { overflow: auto; }
+code, kbd, pre, samp {
+  font-family: monospace, monospace;
+  font-size: 1em;
+}
+
+// Embedded content
+img,
+object,
+embed {
+  max-width: 100%;
+  height: auto;
+
+  #map_canvas &,
+  .map_canvas & {
+    max-width: none !important;
+  }
+}
+object, embed { height: 100%; }
+
+// Address styling
+[hidden], template { display: none; }
+address, cite { font-style: normal; }
+abbr[title] { border-bottom: 1px dotted; }
+dfn { font-style: italic; }
+
+mark {
+  background: rgba($color-main, .3);
+  padding: 0 0.25em;
+}
+
+// Misc inline elements
+q { quotes: "\201C" "\201D" "\2018" "\2019"; }
+small { font-size: 80%; }
+sub, sup { font-size: 75%; line-height: 0; position: relative; vertical-align: baseline; }
+sup { top: -0.5em; }
+sub { bottom: -0.25em; }
+
+// Form styling -----------
+button,
+input,
+optgroup,
+select,
+textarea {
+  outline: none;
+  margin: 0;
+  color: inherit;
+  font: inherit;
+}
+
+button, input[type="submit"] {
+  overflow: visible;
+  cursor: pointer;
+  outline: none;
+  -webkit-backface-visibility: hidden;
+
+  &:focus { outline: none; }
+}
+
+button, select { text-transform: none; }
+optgroup { font-weight: bold; }
+button, input, label { line-height: normal; }
+label { display: block; }
+button, input, select, textarea {
+  font-family: inherit;
+  font-size: 100%;
+  margin: 0;
+}
+
+button,
+html input[type="button"],
+input[type="reset"],
+input[type="submit"] {
+  -webkit-appearance: button;
+  cursor: pointer;
+}
+
+button[disabled],
+html input[disabled] { cursor: default; }
+
+button::-moz-focus-inner,
+input::-moz-focus-inner { border: 0; padding: 0; }
+
+input { line-height: normal; }
+
+input[type="checkbox"],
+input[type="radio"] { box-sizing: border-box; padding: 0; }
+
+input[type="number"]::-webkit-inner-spin-button,
+input[type="number"]::-webkit-outer-spin-button {
+  height: auto;
+}
+
+input[type="search"] {
+  -webkit-appearance: textfield;
+
+  &::-webkit-search-cancel-button,
+  &::-webkit-search-decoration {
+    -webkit-appearance: none;
+  }
+}
+
+// Disable Chrome's datepicker
+input::-webkit-calendar-picker-indicator{ display: none; }
+input[type="date"]::-webkit-input-placeholder{ visibility: hidden !important; }
+
+textarea {
+  overflow: auto;
+  vertical-align: top;
+  resize: vertical; // only vertical resizing
+  height: auto;
+  min-height: 50px;
+}
+
+legend { border: 0; padding: 0; }
+fieldset {
+  border: 0;
+  margin: 0;
+  padding: 0;
+}
+
+// Table
+table {
+  border-collapse: collapse;
+  border-spacing: 0;
+}
+td, th { padding: 0; }
+
+.hide { display: none !important; visibility: hidden !important; }
+
+.flex-iframe {
+  overflow: hidden; position: relative;
+  height: 0; padding-bottom: 67.5%; padding-top: 1.38889rem;
+
+  iframe,
+  object,
+  embed,
+  video {
+    position: absolute; top: 0; left: 0;
+    height: 100%; width: 100%; }
+}

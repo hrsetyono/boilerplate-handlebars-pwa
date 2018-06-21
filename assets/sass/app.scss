@@ -1,6 +1,21 @@
 // Put styles that are unique for this project here
-@import "setting";
-@import "edje-v15";
+@import "normalize";
+
+$font-family : -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Oxygen, Ubuntu, Cantarell, "Fira Sans", "Droid Sans", "Helvetica Neue", Arial, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol";
+
+$color-main : #00aadc;
+
+//////
+
+body {
+  font-family: $font-family;
+  margin: 0 auto;
+  max-width: 760px;
+}
+
+#main-wrapper {
+  padding: 2em 10px;
+}
 
 #main-wrapper.is-loading {
   &::before {
