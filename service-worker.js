@@ -117,14 +117,17 @@ function swMessage( e ) {
   Listen for Push notification
 */
 function swPush( e ) {
+  // abandon if data is empty
+  if( !( e && e.data ) ) { return false; }
+
   console.log( '[Service Worker] Push Received.' );
 
   var data = e.data.json();
   console.log( data );
 
-  const title = 'Test Push';
+  const title = data.title || 'Hello World';
   const options = {
-    body: 'Yay it works.',
+    body: data.body,
     icon: 'assets/images/icon.png',
     badge: 'assets/images/badge.png'
   };

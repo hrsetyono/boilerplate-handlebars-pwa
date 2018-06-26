@@ -1,88 +1,97 @@
 (function($) { 'use strict';
-
 /*
   PushNotification server's key
   - You need to develop your own server and create the key
   - For DEMO, get your key at https://web-push-codelab.glitch.me
   - After allowing notification, you will see a JSON data in console, copy it to "Codelab Message Sending" and send test message.
 */
-const PUBLIC_KEY = 'BJS8GuQlCDavfpzsppGGECE_CjqFoLpvw2HespGY7lQ1lyyD1gMl546xUWg1dqhuHcWa5P5FPA-kcBFUcLIdLn4';
+// const PUBLIC_KEY = 'BJS8GuQlCDavfpzsppGGECE_CjqFoLpvw2HespGY7lQ1lyyD1gMl546xUWg1dqhuHcWa5P5FPA-kcBFUcLIdLn4';
+const PUBLIC_KEY = 'BMeI3oEpLqC0iw5k56zxuDpPafPouNQQ9eRHSpiSbkjDGOBQZSpEAtmIpA6153kmTfnPVTkH3UeC1ckwAja8bcc';
 
-// Start Service Worker
-window.addEventListener( 'load', start );
-function start() {
+
+// Start Service Worker after finished loading
+window.addEventListener( 'load', () => {
   let myWorker = new MyWorker();
-  myWorker.registerServiceWorker();
-}
+  myWorker.registerServiceWorker()
+    // register push notification
+    .then( reg => {
+      console.log( 'Service Worker Ready' );
+      let myNotif = new MyPushNotification( reg );
+      myNotif.subscribe();
+    });
+} );
+
 
 /*
-  Start the Service Worker module
+  Handle Service Worker registration and behavior
 */
 class MyWorker {
   constructor() { }
 
   /*
     Start Service Worker
-    @return Promise( swRegistration ) - after service worker is ready
+    @return Promise( ServiceWorkerRegistration ) - After service worker ready
   */
   registerServiceWorker() {
     if( !('serviceWorker' in navigator) ) { return false; }
-    var self = this;
 
+    // register SW
     navigator.serviceWorker.register( '/service-worker.js' )
-      .then( _addUpdateListener )
-      .catch( error => {
-        console.log( 'Service worker registration failed, error:', error );
-      } );
+      .then( this._checkForUpdate.bind( this ) )
+      .catch( _onFail );
 
-    setTimeout( () => {
-      navigator.serviceWorker.ready.then( _onReady );
+    // after SW ready (added timeout so it works in very-fast connection or localhost)
+    var afterReady = new Promise( resolve => {
+      setTimeout(
+        resolve( navigator.serviceWorker.ready )
+      );
     });
 
-    // Ensure refresh is only called once.
-    // This works around a bug in "force update on reload".
-    var refreshing;
-    navigator.serviceWorker.addEventListener( 'controllerchange', () => {
-      if (refreshing) return;
-      window.location.reload();
-      refreshing = true;
-    });
+    // after new Service Worker is activated
+    var refreshing; // ensure refreshes only once
+    navigator.serviceWorker.addEventListener( 'controllerchange', _onControllerChange );
 
-    //
+    return afterReady;
 
-    function _addUpdateListener( reg ) {
-      // if controller faulty, abandon code
-      if( !navigator.serviceWorker.controller ) { return; }
+    // -----
 
-      // if new worker is detected
-      if( reg.waiting ) {
-        self._notifyUpdate( reg.waiting );
-        return;
-      }
-
-      // if new worker finished is installing, track its progress
-      if( reg.installing ) {
-        self._trackInstalling( reg.installing );
-        return;
-      }
-
-      // listen for new workers installing, track its progress
-      reg.addEventListener( 'updatefound', () => {
-        self._trackInstalling( reg.installing );
-      });
+    function _onFail( error ) {
+      console.log( 'Service worker registration failed, error:', error );
     }
 
-
-    function _onReady( reg ) {
-      console.log( 'Service Worker Ready' );
-
-      // register push notification
-      let myNotif = new MyPushNotification( reg );
-      myNotif.subscribe();
+    function _onControllerChange() {
+      if( refreshing ) { return; }
+      window.location.reload();
+      refreshing = true;
     }
   }
 
-  //
+
+  /*
+    Check for new version of Service Worker
+    @param ServiceWorkerRegistration
+  */
+  _checkForUpdate( reg ) {
+    // if service worker not yet take-over, don't check for update
+    if( !navigator.serviceWorker.controller ) { return; }
+
+    // if new worker is detected
+    if( reg.waiting ) {
+      this._notifyUpdate( reg.waiting );
+      return;
+    }
+
+    // if new worker finished is installing, track its progress
+    if( reg.installing ) {
+      this._trackInstalling( reg.installing );
+      return;
+    }
+
+    // listen for new workers installing, track its progress
+    reg.addEventListener( 'updatefound', () => {
+      this._trackInstalling( reg.installing );
+    });
+  }
 
   /*
     Notify user about update
