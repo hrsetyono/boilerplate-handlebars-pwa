@@ -1,5 +1,5 @@
 {
-  "name": "My Progressive Web App",
+  "name": "My PWA",
   "short_name": "My PWA",
   "icons": [{
     "src": "/assets/images/icon-128x128.png",
@@ -22,5 +22,5 @@
   "display": "standalone",
   "background_color": "#3a2c3d",
   "theme_color": "#3a2c3d",
-  "gcm_sender_id": "204903686576"                
+  "gcm_sender_id": "103953800507"
 }

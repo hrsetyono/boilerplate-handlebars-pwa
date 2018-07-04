@@ -49,8 +49,6 @@ self.addEventListener( 'notificationclick', swNotificationClick );
   When Service Worker finished installing
 */
 function swInstall( e ) {
-  console.log( 'sw install' );
-
   e.waitUntil(
     caches.open( STATIC_CACHE ).then( addCache )
   );
@@ -66,12 +64,12 @@ function swInstall( e ) {
   When Service Worker has been activated
 */
 function swActivate( e ) {
-  console.log( 'sw activate' );
   e.waitUntil(
     caches.keys().then( _deleteOldCache )
   );
 
-  // remove old caches
+  //
+
   function _deleteOldCache( allCaches ) {
     return Promise.all(
       allCaches.filter( c => {
@@ -87,6 +85,8 @@ function swActivate( e ) {
   When the page requests data
 */
 function swFetch( e ) {
+  if (e.request.cache === 'only-if-cached' && e.request.mode !== 'same-origin') { return false; }
+
   var requestUrl = new URL( e.request.url );
 
   // if request image, cache it
@@ -119,13 +119,11 @@ function swMessage( e ) {
 function swPush( e ) {
   // abandon if data is empty
   if( !( e && e.data ) ) { return false; }
-
   console.log( '[Service Worker] Push Received.' );
 
   var data = e.data.json();
-  console.log( data );
 
-  const title = data.title || 'Hello World';
+  const title = data.title
   const options = {
     body: data.body,
     icon: 'assets/images/icon.png',

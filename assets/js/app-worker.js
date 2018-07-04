@@ -5,8 +5,8 @@
   - For DEMO, get your key at https://web-push-codelab.glitch.me
   - After allowing notification, you will see a JSON data in console, copy it to "Codelab Message Sending" and send test message.
 */
-// const PUBLIC_KEY = 'BJS8GuQlCDavfpzsppGGECE_CjqFoLpvw2HespGY7lQ1lyyD1gMl546xUWg1dqhuHcWa5P5FPA-kcBFUcLIdLn4';
-const PUBLIC_KEY = 'BMeI3oEpLqC0iw5k56zxuDpPafPouNQQ9eRHSpiSbkjDGOBQZSpEAtmIpA6153kmTfnPVTkH3UeC1ckwAja8bcc';
+// const PUBLIC_KEY = 'BI6WUCypyn-Tt1HzTbn0vPs9e6snXLPX1q9BacNuKwQ3nYqp0ce0_aRd4CNr7YCYp1uK6BetQy08zhIpYXbzuEY' // codelab
+const PUBLIC_KEY = 'BPqhA8ofNI5_FTDZRfv1y2Ov0GXH9XU6SgWrbgNTO7MmZVwUZzqSflmIl8UxoimCr57BKnDJPtF6gctN0kmmUnM';
 
 
 // Start Service Worker after finished loading
@@ -148,7 +148,9 @@ class MyPushNotification {
         // prompt user to allow / block
         return this.reg.pushManager.subscribe({
           userVisibleOnly: true,
-          applicationServerKey: serverKey
+          // applicationServerKey: serverKey,
+          // topic: 'test',
+          // senderId: '204903686576'
         });
       })
       // update server after finish subscribing
