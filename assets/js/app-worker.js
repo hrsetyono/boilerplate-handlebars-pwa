@@ -5,7 +5,6 @@
   - For DEMO, get your key at https://web-push-codelab.glitch.me
   - After allowing notification, you will see a JSON data in console, copy it to "Codelab Message Sending" and send test message.
 */
-// const PUBLIC_KEY = 'BI6WUCypyn-Tt1HzTbn0vPs9e6snXLPX1q9BacNuKwQ3nYqp0ce0_aRd4CNr7YCYp1uK6BetQy08zhIpYXbzuEY' // codelab
 const PUBLIC_KEY = 'BPqhA8ofNI5_FTDZRfv1y2Ov0GXH9XU6SgWrbgNTO7MmZVwUZzqSflmIl8UxoimCr57BKnDJPtF6gctN0kmmUnM';
 
 
@@ -148,9 +147,7 @@ class MyPushNotification {
         // prompt user to allow / block
         return this.reg.pushManager.subscribe({
           userVisibleOnly: true,
-          // applicationServerKey: serverKey,
-          // topic: 'test',
-          // senderId: '204903686576'
+          applicationServerKey: serverKey,
         });
       })
       // update server after finish subscribing
@@ -177,11 +174,25 @@ class MyPushNotification {
 
   /*
     Save latest subscriber to server
-    TODO: Make this send a POST request to server
   */
   _updateServer( sub ) {
     if( sub ) {
-      console.log( JSON.stringify( sub ) );
+      var body = {
+        content: JSON.stringify( sub ),
+        topic: '',
+        user_id: 0,
+        h_push_id: sub.endpoint.substr( -10 ),
+      };
+
+      fetch( 'http://wp.test/wp-json/h/v0/subscribe', {
+        method: 'POST',
+        mode: 'cors',
+        credentials: 'same-origin',
+        headers: { 'Content-Type': 'application/json; charset=utf-8' },
+        body: JSON.stringify( body ),
+      }).then( response => {
+        console.log( response );
+      } );
     } else {
       console.log( 'Subscription does not exist' );
     }
