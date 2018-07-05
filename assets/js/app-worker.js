@@ -181,7 +181,7 @@ class MyPushNotification {
         content: JSON.stringify( sub ),
         topic: '',
         user_id: 0,
-        h_push_id: sub.endpoint.substr( -10 ),
+        h_push_id: sub.endpoint.substr( -12 ),
       };
 
       fetch( 'http://wp.test/wp-json/h/v0/subscribe', {
