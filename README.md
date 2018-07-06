@@ -8,7 +8,7 @@ It's a very simple engine and has very low learning curve.
 
 This is a blog app that's pulling data from my Wordpress.com account.
 
-- You can use your own account by changing `API_BASE` variable in  `/assets/js/helpers.js`.
+- You can use your own account by changing `API_BASE` variable in  **/assets/js/helpers.js**.
 
 **HOW TO RUN**
 
@@ -26,15 +26,15 @@ To make debug easier, open Chrome DevTools > Application tab > Service Worker si
 
     Image cache in Demo app is hardcoded to only work with WordPress.com site.
 
-    You need to adapt IMAGE_URL_INDICATOR in `/service-worker.js`. URL containing this value will be cached. For example self-install WordPress is `/wp-content/uploads/`.
+    Change `IMAGE_URL_INDICATOR` in **/service-worker.js** to part of your URL that indicate an image. For example self-install WordPress is `/wp-content/uploads/`.
 
 1. **UPDATE PROMPT** - Triggered when there is any changes to **service-worker.js**.
 
 1. **WEB PUSH NOTIFICATION** - Require a lot of setups.
 
-    - First unncomment line 11 and 12 in `/assets/js/app-worker.js`.
+    - First unncomment line 11 and 12 in **/assets/js/app-worker.js**.
     - Then you need to setup Push server. [Read here](https://github.com/hrsetyono/wp-edje/wiki/Web-Push) for example using WordPress.
-    - Change PUSH_PUBLIC_KEY and PUSH_SAVE_ENDPOINT in `/assets/js/helpers.js` to fit yours.
+    - Change `PUSH_PUBLIC_KEY` and `PUSH_SAVE_ENDPOINT` in **/assets/js/helpers.js** to fit yours.
 
 ## Useful Links
 
