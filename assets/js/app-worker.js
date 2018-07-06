@@ -1,142 +1,66 @@
 (function($) { 'use strict';
 
-
-// Start Service Worker after finished loading
 window.addEventListener( 'load', () => {
-  let myWorker = new MyWorker();
-  myWorker.registerServiceWorker()
-    // register push notification
-    .then( reg => {
-      console.log( 'Service Worker Ready' );
+  let appWorker = new AppWorker();
+  let appPush = new AppPush();
 
-      let myPush = new MyPushNotification( reg );
-      myPush.subscribe();
-    });
+  appWorker.register( '/service-worker.js' )
+   .then( reg => {
+     console.log( 'Service Worker Ready' );
+
+     appPush.subscribe( reg );
+   });
 } );
 
-
 /*
-  Handle Service Worker registration and behavior
+  Handle Service Worker registration
 */
-class MyWorker {
+class AppWorker {
   constructor() { }
 
   /*
-    Start Service Worker
-    @return Promise( ServiceWorkerRegistration ) - After service worker ready
+    Register service worker
+    @param workerFile (string) - Path to service worker JS file
+    @return Promise( ServiceWorkerRegistration ) - After successfully registered
   */
-  registerServiceWorker() {
-    if( !('serviceWorker' in navigator) ) { return false; }
+  register( workerFile ) {
+    MY_WORKER.register( workerFile, this._notifyUpdate );
 
-    // register SW
-    navigator.serviceWorker.register( '/service-worker.js' )
-      .then( this._checkForUpdate.bind( this ) )
-      .catch( _onFail );
-
-    // after SW ready (added timeout so it works in very-fast connection or localhost)
-    var afterReady = new Promise( resolve => {
-      setTimeout(
-        resolve( navigator.serviceWorker.ready )
-      );
-    });
-
-    // after new Service Worker is activated
-    var refreshing; // ensure refreshes only once
-    navigator.serviceWorker.addEventListener( 'controllerchange', _onControllerChange );
-
-    return afterReady;
-
-    // -----
-
-    function _onFail( error ) {
-      console.log( 'Service worker registration failed, error:', error );
-    }
-
-    function _onControllerChange() {
-      if( refreshing ) { return; }
-      window.location.reload();
-      refreshing = true;
-    }
-  }
-
-
-  /*
-    Check for new version of Service Worker
-    @param ServiceWorkerRegistration
-  */
-  _checkForUpdate( reg ) {
-    // if service worker not yet take-over, don't check for update
-    if( !navigator.serviceWorker.controller ) { return; }
-
-    // if new worker is detected
-    if( reg.waiting ) {
-      this._notifyUpdate( reg.waiting );
-      return;
-    }
-
-    // if new worker finished is installing, track its progress
-    if( reg.installing ) {
-      this._trackInstalling( reg.installing );
-      return;
-    }
-
-    // listen for new workers installing, track its progress
-    reg.addEventListener( 'updatefound', () => {
-      this._trackInstalling( reg.installing );
-    });
+    return MY_WORKER.afterReady(); // check if service worker is ready
   }
 
   /*
     Notify user about update
-    @param worker - The new service worker object
+    @param worker (ServiceWorker) - The new service worker object
   */
   _notifyUpdate( worker ) {
-    var toast = new MyToast( 'New version is available', 'Update' );
-
-    toast.show();
-    toast.answer.then( isClicked => {
-      if( isClicked ) {
-        worker.postMessage( {action: 'skipWaiting'} );
-        location.reload(); // this should be in "controllerchange" listener
-      }
-    });
-  }
-
-  /*
-    Listen when new worker finished installing
-    @param worker - The new service worker object
-  */
-  _trackInstalling( worker ) {
-    worker.addEventListener( 'statechange', () => {
-      if( worker.state == 'installed' && navigator.serviceWorker.controller ) {
-        this._notifyUpdate( worker );
-      }
-    });
+    // Replace this with proper JS alert box because confirm() is annoying during Debug process.
+    if( confirm( 'New version is available, Update?') ) {
+      worker.postMessage( { action: 'skipWaiting' } ); // this will refresh the page and show new version
+    }
   }
 }
 
-
 /*
-  Push Notification
-
-  @param ServiceWorkerRegistration
+  Handle push notification
 */
-class MyPushNotification {
-  constructor( reg ) {
-    this.reg = reg;
-  }
+class AppPush {
+  constructor() { }
 
   /*
     Prompt user to allow notification
+    @param reg (ServiceWorkerRegistration)
   */
-  subscribe() {
-    MY_PUSH.subscribe( this.reg )
+  subscribe( reg ) {
+    MY_PUSH.subscribe( reg )
       .then( this._updateServer )
       .catch( error => console.log( error ) );
   }
 
   /*
-    Save latest subscriber to server
+    Save latest subscriber to server.
+
+    @param sub (PushSubscription) - Unique data to identify this client
   */
   _updateServer( sub ) {
     if( !sub ) { console.log( 'Subscription does not exist' ); return false; }
@@ -147,6 +71,10 @@ class MyPushNotification {
       user_id: 0,
     };
 
+    /*
+      I'm using WordPress to save the subscription data
+      By using my plugin: https://github.com/hrsetyono/wp-edje/wiki/Web-Push
+    */
     MY_API.post( 'http://wp.test/wp-json/h/v0/subscribe', body )
       .then( response => {
         console.log( 'Push Notification Subscribed' );

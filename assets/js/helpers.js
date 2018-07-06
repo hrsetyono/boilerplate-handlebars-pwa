@@ -88,6 +88,90 @@ const MY_API = {
 }
 
 /*
+  Service Worker helpers
+*/
+const MY_WORKER = {
+  /*
+    @param workerFile (string) - Path to the service worker JS file
+    @param notifyUpdateCallback (function) - Called when update to service worker is found
+  */
+  register( workerFile, notifyUpdateCallback ) {
+    if( !('serviceWorker' in navigator) ) { return false; }
+
+    this.notifyUpdateCallback = notifyUpdateCallback;
+    this._addUpdateListener();
+
+    // register SW
+    return navigator.serviceWorker.register( workerFile )
+      .then( this._checkForUpdate.bind( this ) )
+      .catch( err => {
+        console.log( 'Service worker registration failed, error:', err );
+      } );
+  },
+
+  /*
+    Check if service worker is ready
+  */
+  afterReady() {
+    return new Promise( resolve => {
+      setTimeout(
+        resolve( navigator.serviceWorker.ready )
+      );
+    });
+  },
+
+
+  // Refresh page after new Service Worker is activated
+  _addUpdateListener() {
+    var refreshing;
+    navigator.serviceWorker.addEventListener( 'controllerchange', () => {
+      if( refreshing ) { return; }
+      window.location.reload();
+      refreshing = true;
+    } );
+  },
+
+
+  /*
+    Check for new version of Service Worker
+    @param ServiceWorkerRegistration
+  */
+  _checkForUpdate( reg ) {
+    // if service worker not yet take-over, don't check for update
+    if( !navigator.serviceWorker.controller ) { return; }
+
+    // if new worker is detected
+    if( reg.waiting ) {
+      this.notifyUpdateCallback( reg.waiting );
+      return;
+    }
+
+    // if new worker finished is installing, track its progress
+    if( reg.installing ) {
+      this._trackInstalling( reg.installing );
+      return;
+    }
+
+    // listen for new workers installing, track its progress
+    reg.addEventListener( 'updatefound', () => {
+      this._trackInstalling( reg.installing );
+    });
+  },
+
+  /*
+    Listen when new worker finished installing
+    @param worker - The new service worker object
+  */
+  _trackInstalling( worker ) {
+    worker.addEventListener( 'statechange', () => {
+      if( worker.state == 'installed' && navigator.serviceWorker.controller ) {
+        this.notifyUpdateCallback( worker );
+      }
+    });
+  },
+};
+
+/*
   Web Push helpers
 */
 const MY_PUSH = {
@@ -96,7 +180,7 @@ const MY_PUSH = {
   */
   subscribe( reg ) {
     if( !('PushManager' in window) ) { return false; }
-    
+
     return this._check( reg )
       .then( isSubbed => {
         if( isSubbed ) { throw new Error( 'ERROR - User already subscribed' ); }
