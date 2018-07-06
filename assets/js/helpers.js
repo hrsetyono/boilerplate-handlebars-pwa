@@ -1,5 +1,5 @@
 const API_BASE = 'https://public-api.wordpress.com/rest/v1.1/sites/hrsetyono.wordpress.com';
-
+const PUBLIC_KEY = 'BPqhA8ofNI5_FTDZRfv1y2Ov0GXH9XU6SgWrbgNTO7MmZVwUZzqSflmIl8UxoimCr57BKnDJPtF6gctN0kmmUnM';
 
 /*
   Data Model - Get data from cache, if empty, do API call.
@@ -48,63 +48,120 @@ class MyModel {
     MyAPI.get( url ).then( result => { .. } );
     MyAPI.post( url, data ).then( result => { ... } );
 */
-const MyAPI = {
+const MY_API = {
   get( endpoint ) {
-    return window
-      .fetch(endpoint, {
-        method: "GET",
-        headers: { Accept: "application/json" }
-      })
-      .then( this._handleError )
-      .then( this._handleContentType )
-      .catch( error => {
-        throw new Error( error );
-      });
+    return window.fetch( endpoint, {
+      method: 'GET',
+      headers: { 'Accept': 'application/json' }
+    } )
+    .then( this._handleError )
+    .then( this._handleContentType )
+    .catch( this._throwError );
   },
 
   post( endpoint, body ) {
-    return window
-      .fetch( endpoint, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: body
-      })
-      .then( this._handleError )
-      .then( this._handleContentType )
-      .catch( error => {
-        throw new Error( error );
-      });
+    return window.fetch( endpoint, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify( body ),
+    } )
+    .then( this._handleError )
+    .then( this._handleContentType )
+    .catch( this._throwError );
   },
 
   _handleError( err ) {
-    return err.ok ? err : Promise.reject( err.statusText );
+    return err.ok ? err : Promise.reject( err.statusText )
   },
 
   _handleContentType( res ) {
     const contentType = res.headers.get( 'content-type' );
     if( contentType && contentType.includes( 'application/json' ) ) {
-      return res.json();
+      return res.json()
     }
-    return Promise.reject( 'Oops, we haven\'t got JSON!' );
+    return Promise.reject( 'Oops, we haven\'t got JSON!' )
+  },
+
+  _throwError( err ) {
+    throw new Error( err );
   }
+}
+
+/*
+  Web Push helpers
+*/
+const MY_PUSH = {
+  /*
+    @param reg (ServiceWorkerRegistration)
+  */
+  subscribe( reg ) {
+    if( !('PushManager' in window) ) { return false; }
+    
+    return this._check( reg )
+      .then( isSubbed => {
+        if( isSubbed ) { throw new Error( 'ERROR - User already subscribed' ); }
+
+        const serverKey = this._urlB64ToUint8Array( PUBLIC_KEY );
+
+        // prompt user to allow / block
+        return reg.pushManager.subscribe({
+          userVisibleOnly: true,
+          applicationServerKey: serverKey,
+        });
+      } );
+  },
+
+  _check( reg ) {
+    return reg.pushManager.getSubscription()
+      .then( sub => {
+        return sub !== null;
+      });
+  },
+
+  /*
+    Convert Server Key
+  */
+  _urlB64ToUint8Array( base64String ) {
+    const padding = '='.repeat( (4 - base64String.length % 4) % 4 );
+    const base64 = ( base64String + padding )
+      .replace(/\-/g, '+')
+      .replace(/_/g, '/');
+
+    const rawData = window.atob( base64 );
+    const outputArray = new Uint8Array( rawData.length );
+
+    for( let i = 0; i < rawData.length; ++i ) {
+      outputArray[ i ] = rawData.charCodeAt( i );
+    }
+    return outputArray;
+  }
+
 };
 
 
 /*
-  My JQuery Extension
+  All extensions for jquery
 */
-jQuery.fn.extend({
-  /* Compile template with data provided
+class MyJQuery {
+  constructor() {
+    jQuery.fn.extend({
+      compile: this.compile,
+    });
+  }
+
+  /*
+    Compile Handlebars template with data provided
     Example:
       $( '#script-template-id' ).compile( data );
   */
-  compile: function( data ) {
+  compile( data ) {
     var source = this[0].innerHTML;
     var template = Handlebars.compile( source );
     return template( data );
-  },
-});
+  }
+}
 
+new MyJQuery();
 
 
 /*

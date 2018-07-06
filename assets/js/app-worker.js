@@ -1,11 +1,4 @@
 (function($) { 'use strict';
-/*
-  PushNotification server's key
-  - You need to develop your own server and create the key
-  - For DEMO, get your key at https://web-push-codelab.glitch.me
-  - After allowing notification, you will see a JSON data in console, copy it to "Codelab Message Sending" and send test message.
-*/
-const PUBLIC_KEY = 'BPqhA8ofNI5_FTDZRfv1y2Ov0GXH9XU6SgWrbgNTO7MmZVwUZzqSflmIl8UxoimCr57BKnDJPtF6gctN0kmmUnM';
 
 
 // Start Service Worker after finished loading
@@ -15,8 +8,9 @@ window.addEventListener( 'load', () => {
     // register push notification
     .then( reg => {
       console.log( 'Service Worker Ready' );
-      let myNotif = new MyPushNotification( reg );
-      myNotif.subscribe();
+
+      let myPush = new MyPushNotification( reg );
+      myPush.subscribe();
     });
 } );
 
@@ -136,85 +130,28 @@ class MyPushNotification {
     Prompt user to allow notification
   */
   subscribe() {
-    if( !('PushManager' in window) ) { return false; }
-
-    // check if already subscribed
-    this._checkSubscription()
-      .then( isSubscribed => {
-        if( isSubscribed ) { throw new Error( 'User already subscribed' ); }
-
-        const serverKey = this._urlB64ToUint8Array( PUBLIC_KEY );
-        // prompt user to allow / block
-        return this.reg.pushManager.subscribe({
-          userVisibleOnly: true,
-          applicationServerKey: serverKey,
-        });
-      })
-      // update server after finish subscribing
-      .then( sub => {
-        console.log( 'Push Notification Subscribed' );
-        this._updateServer( sub );
-      })
+    MY_PUSH.subscribe( this.reg )
+      .then( this._updateServer )
       .catch( error => console.log( error ) );
-  }
-
-
-  //
-
-  /*
-    Check current state of subscription
-  */
-  _checkSubscription() {
-    return this.reg.pushManager.getSubscription()
-      .then( sub => {
-        this._updateServer( sub );
-        return sub !== null;
-      });
   }
 
   /*
     Save latest subscriber to server
   */
   _updateServer( sub ) {
-    if( sub ) {
-      var body = {
-        content: JSON.stringify( sub ),
-        topic: '',
-        user_id: 0,
-        h_push_id: sub.endpoint.substr( -12 ),
-      };
+    if( !sub ) { console.log( 'Subscription does not exist' ); return false; }
 
-      fetch( 'http://wp.test/wp-json/h/v0/subscribe', {
-        method: 'POST',
-        mode: 'cors',
-        credentials: 'same-origin',
-        headers: { 'Content-Type': 'application/json; charset=utf-8' },
-        body: JSON.stringify( body ),
-      }).then( response => {
+    var body = {
+      content: JSON.stringify( sub ),
+      topic: '',
+      user_id: 0,
+    };
+
+    MY_API.post( 'http://wp.test/wp-json/h/v0/subscribe', body )
+      .then( response => {
+        console.log( 'Push Notification Subscribed' );
         console.log( response );
       } );
-    } else {
-      console.log( 'Subscription does not exist' );
-    }
-  }
-
-
-  /*
-    Convert Server Key
-  */
-  _urlB64ToUint8Array( base64String ) {
-    const padding = '='.repeat( (4 - base64String.length % 4) % 4 );
-    const base64 = ( base64String + padding )
-      .replace(/\-/g, '+')
-      .replace(/_/g, '/');
-
-    const rawData = window.atob( base64 );
-    const outputArray = new Uint8Array( rawData.length );
-
-    for( let i = 0; i < rawData.length; ++i ) {
-      outputArray[ i ] = rawData.charCodeAt( i );
-    }
-    return outputArray;
   }
 }
 
