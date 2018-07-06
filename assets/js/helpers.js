@@ -3,12 +3,36 @@ const PUSH_PUBLIC_KEY = 'BPqhA8ofNI5_FTDZRfv1y2Ov0GXH9XU6SgWrbgNTO7MmZVwUZzqSflm
 const PUSH_SAVE_ENDPOINT = 'http://wp.test/wp-json/h/v0/subscribe';
 
 /*
+  All extensions for jquery
+*/
+class H_JQuery {
+  constructor() {
+    jQuery.fn.extend({
+      compile: this.compile,
+    });
+  }
+
+  /*
+    Compile Handlebars template with data provided
+    Example:
+      $( '#script-template-id' ).compile( data );
+  */
+  compile( data ) {
+    var source = this[0].innerHTML;
+    var template = Handlebars.compile( source );
+    return template( data );
+  }
+}
+new H_JQuery();
+
+
+/*
   Data Model - Get data from cache, if empty, do API call.
 
-  This is only for parent class, extend it and call super() to override variable.
+  This is only for parent class, extend it and call super() to override constructor.
   Example in `app-model.js`
 */
-class MyModel {
+class H_Model {
   constructor( endpoint, cacheKey ) {
     this.endpoint = API_BASE + endpoint;
     this.cacheKey = cacheKey;
@@ -18,26 +42,19 @@ class MyModel {
     return localforage.getItem( this.cacheKey )
       .then( data => {
         // if data is empty, fetch new one
-        if( data === null ) {
-          return this.set();
-        }
+        if( data === null ) { return this.set(); }
+
         return data;
       });
   }
 
 
   set() {
-    return MyAPI.get( this.endpoint )
-      .then( this._setCache.bind( this ) );
-  }
-
-  /*
-    Save the data to cache
-    TIPS: override this in Child class to modify the data before saving.
-  */
-  _setCache( data ) {
-    localforage.setItem( this.cacheKey, data );
-    return data;
+    return H_API.get( this.endpoint );
+      .then( data => {
+        localforage.setItem( this.cacheKey, data );
+        return data;
+      } );
   }
 }
 
@@ -46,10 +63,10 @@ class MyModel {
   Simple GET and POST functions that return Promise.
 
   Example:
-    MyAPI.get( url ).then( result => { .. } );
-    MyAPI.post( url, data ).then( result => { ... } );
+    H_API.get( url ).then( result => { .. } );
+    H_API.post( url, data ).then( result => { ... } );
 */
-const MY_API = {
+const H_API = {
   get( endpoint ) {
     return window.fetch( endpoint, {
       method: 'GET',
@@ -90,9 +107,13 @@ const MY_API = {
 
 /*
   Service Worker helpers
+  Example: See /js/app-worker.js
+  }
 */
-const MY_WORKER = {
+const H_WORKER = {
   /*
+    Register service worker
+
     @param workerFile (string) - Path to the service worker JS file
     @param notifyUpdateCallback (function) - Called when update to service worker is found
   */
@@ -102,7 +123,6 @@ const MY_WORKER = {
     this.notifyUpdateCallback = notifyUpdateCallback;
     this._addUpdateListener();
 
-    // register SW
     return navigator.serviceWorker.register( workerFile )
       .then( this._checkForUpdate.bind( this ) )
       .catch( err => {
@@ -122,7 +142,9 @@ const MY_WORKER = {
   },
 
 
-  // Refresh page after new Service Worker is activated
+  /*
+    Refresh page after new Service Worker is activated
+  */
   _addUpdateListener() {
     var refreshing;
     navigator.serviceWorker.addEventListener( 'controllerchange', () => {
@@ -135,7 +157,8 @@ const MY_WORKER = {
 
   /*
     Check for new version of Service Worker
-    @param ServiceWorkerRegistration
+
+    @param ref (ServiceWorkerRegistration)
   */
   _checkForUpdate( reg ) {
     // if service worker not yet take-over, don't check for update
@@ -161,7 +184,8 @@ const MY_WORKER = {
 
   /*
     Listen when new worker finished installing
-    @param worker - The new service worker object
+
+    @param worker (ServiceWorker) - The new service worker object
   */
   _trackInstalling( worker ) {
     worker.addEventListener( 'statechange', () => {
@@ -174,9 +198,13 @@ const MY_WORKER = {
 
 /*
   Web Push helpers
+
+  Example: See /js/app-worker.js
 */
-const MY_PUSH = {
+const H_PUSH = {
   /*
+    Create subscription data using the Public Key
+
     @param reg (ServiceWorkerRegistration)
   */
   subscribe( reg ) {
@@ -196,6 +224,11 @@ const MY_PUSH = {
       } );
   },
 
+  /*
+    Check if client already subscribed
+
+    @param reg (ServiceWorkerRegistration)
+  */
   _check( reg ) {
     return reg.pushManager.getSubscription()
       .then( sub => {
@@ -204,7 +237,9 @@ const MY_PUSH = {
   },
 
   /*
-    Convert Server Key
+    Encrypt Public Key
+    
+    @param base64String (string)
   */
   _urlB64ToUint8Array( base64String ) {
     const padding = '='.repeat( (4 - base64String.length % 4) % 4 );
@@ -224,29 +259,7 @@ const MY_PUSH = {
 };
 
 
-/*
-  All extensions for jquery
-*/
-class MyJQuery {
-  constructor() {
-    jQuery.fn.extend({
-      compile: this.compile,
-    });
-  }
 
-  /*
-    Compile Handlebars template with data provided
-    Example:
-      $( '#script-template-id' ).compile( data );
-  */
-  compile( data ) {
-    var source = this[0].innerHTML;
-    var template = Handlebars.compile( source );
-    return template( data );
-  }
-}
-
-new MyJQuery();
 
 
 /*
@@ -259,7 +272,7 @@ new MyJQuery();
       if( isClicked ) { ... }
     });
 */
-class MyToast {
+class HToast {
   /*
     @param message (string)
     @param buttonText (string)

@@ -22,7 +22,7 @@ To make debug easier, open Chrome DevTools > Application tab > Service Worker si
 
 1. **SIMPLE HTML & JS** - No compiler, no headache.
 
-1. **WORKS OFFLINE** - Loaded images and JSON data pulled using `MY_API.get()` is automatically cached.
+1. **WORKS OFFLINE** - Loaded images and JSON data pulled using `H_API.get()` is automatically cached.
 
     Image cache in Demo app is hardcoded to only work with WordPress.com site.
 

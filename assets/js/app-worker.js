@@ -1,41 +1,43 @@
 (function($) { 'use strict';
 
 window.addEventListener( 'load', () => {
-  let appWorker = new AppWorker();
+  let myWorker = new MyWorker();
 
-  appWorker.register( '/service-worker.js' )
+  myWorker.register( '/service-worker.js' )
    .then( reg => {
      console.log( 'Service Worker Ready' );
 
      // TODO: Uncomment this to enable Web Push
-     // let appPush = new AppPush();
-     // appPush.subscribe( reg );
+     // let myPush = new MyPush();
+     // myPush.subscribe( reg );
    });
 } );
 
 /*
   Handle Service Worker registration
 */
-class AppWorker {
+class MyWorker {
   constructor() { }
 
   /*
     Register service worker
+
     @param workerFile (string) - Path to service worker JS file
     @return Promise( ServiceWorkerRegistration ) - After successfully registered
   */
   register( workerFile ) {
-    MY_WORKER.register( workerFile, this._notifyUpdate );
+    H_WORKER.register( workerFile, this._notifyUpdate );
 
-    return MY_WORKER.afterReady(); // check if service worker is ready
+    return H_WORKER.afterReady(); // check if service worker is ready
   }
 
   /*
     Notify user about update
+
     @param worker (ServiceWorker) - The new service worker object
   */
   _notifyUpdate( worker ) {
-    // Replace this with proper JS alert box because confirm() is annoying during Debug process.
+    // You can replace this with your own Toast / Alert box
     if( confirm( 'New version is available, Update?') ) {
       worker.postMessage( { action: 'skipWaiting' } ); // this will refresh the page and show new version
     }
@@ -45,15 +47,16 @@ class AppWorker {
 /*
   Handle push notification
 */
-class AppPush {
+class MyPush {
   constructor() { }
 
   /*
     Prompt user to allow notification
+
     @param reg (ServiceWorkerRegistration)
   */
   subscribe( reg ) {
-    MY_PUSH.subscribe( reg )
+    H_PUSH.subscribe( reg )
       .then( this._updateServer )
       .catch( error => console.log( error ) );
   }
@@ -74,9 +77,9 @@ class AppPush {
 
     /*
       I'm using WordPress to save the subscription data
-      By using my plugin: https://github.com/hrsetyono/wp-edje/wiki/Web-Push
+      Read more: https://github.com/hrsetyono/wp-edje/wiki/Web-Push
     */
-    MY_API.post( PUSH_SAVE_ENDPOINT, body )
+    H_API.post( PUSH_SAVE_ENDPOINT, body )
       .then( response => {
         console.log( 'Push Notification Subscribed' );
         console.log( response );

@@ -2,27 +2,28 @@
   Get latest blog posts.
   https://developer.wordpress.com/docs/api/1.1/get/sites/%24site/posts/
 */
-class HomeModel extends MyModel {
+class HomeModel extends H_Model {
   constructor() {
     super( '/posts', 'posts' );
   }
 
-  _setCache( data ) {
-    data.posts = data.posts.map( post => {
-      // shorten excerpt
-      post.excerpt = post.excerpt.substring( 0, 160 );
+  set() {
+    super.set() // Override set() calls because we want to modify data before caching
+    .then( data => {
+      // format posts data
+      data.posts = data.posts.map( post => {
+        post.excerpt = post.excerpt.substring( 0, 160 ); // shorten excerpt
 
-      // get the first category only
-      for( var c in post.terms.category ) {
-        post.terms.category = post.terms.category[c];
-        break;
-      }
+        for( var c in post.terms.category ) {
+          post.terms.category = post.terms.category[c]; // get the first category only
+          break;
+        }
+        return post;
+      });
 
-      return post;
-    });
-
-    localforage.setItem( this.cacheKey, data.posts );
-    return data.posts;
+      localforage.setItem( this.cacheKey, data.posts );
+      return data.posts;
+    } );
   }
 }
 
@@ -31,7 +32,7 @@ class HomeModel extends MyModel {
   Get a single post
   https://developer.wordpress.com/docs/api/1.1/get/sites/%24site/posts/%24post_ID/
 */
-class PostModel extends MyModel {
+class PostModel extends H_Model {
   constructor( id ) {
     super( '/posts/' + id, 'post_' + id );
   }
@@ -43,7 +44,7 @@ class PostModel extends MyModel {
   Get a single page
   https://developer.wordpress.com/docs/api/1.1/get/sites/%24site/posts/slug:%24post_slug/
 */
-class PageModel extends MyModel {
+class PageModel extends H_Model {
   constructor( slug ) {
     super( '/posts/slug:' + slug, 'page_' + slug );
   }
