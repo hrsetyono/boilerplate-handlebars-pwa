@@ -6,7 +6,9 @@ It's a very simple engine and has very low learning curve.
 
 ## The Demo App
 
-We provide you with a Blog app that are pulling data from my Wordpress.com account. You can use your own blog by changing `API_BASE` variable in  `/assets/js/helpers.js`.
+This is a blog app that's pulling data from my Wordpress.com account.
+
+- You can use your own account by changing `API_BASE` variable in  `/assets/js/helpers.js`.
 
 **HOW TO RUN**
 
@@ -14,24 +16,25 @@ We provide you with a Blog app that are pulling data from my Wordpress.com accou
 1. Point this project directory and start the Server.
 1. Click the Web server URL.
 
-**HOW TO DEBUG**
+To make debug easier, open Chrome DevTools > Application tab > Service Worker sidebar > tick "Update on reload".
 
-The cache in PWA is very persistent, so new changes won't be reflected even if you do Hard Refresh.
+## Features
 
-Easiest solution is:
+1. **SIMPLE HTML & JS** - No compiler, no headache.
 
-1. In Chrome Dev Tools, go to **Application** tab.
-1. Select "Service Workers" and tick "Update on reload".
+1. **WORKS OFFLINE** - Loaded images and JSON data pulled using `MY_API.get()` is automatically cached.
 
-**HOW TO UPDATE LIVE APP**
+    Image cache in Demo app is hardcoded to only work with WordPress.com site.
 
-You can't expect your user to clear cache to see if the app is updated.
+    You need to adapt IMAGE_URL_INDICATOR in `/service-worker.js`. URL containing this value will be cached. For example self-install WordPress is `/wp-content/uploads/`.
 
-In this demo, a dialog box will appear when there's new update. To trigger it, do the following:
+1. **UPDATE PROMPT** - Triggered when there is any changes to **service-worker.js**.
 
-1. Any changes to `service-worker.js` will trigger the dialog box. So simply increment the VERSION variable.
-1. Upload the changes to your host.
-1. When the user clicks the box, it will delete the old cache.
+1. **WEB PUSH NOTIFICATION** - Require a lot of setups.
+
+    - First unncomment line 11 and 12 in `/assets/js/app-worker.js`.
+    - Then you need to setup Push server. [Read here](https://github.com/hrsetyono/wp-edje/wiki/Web-Push) for example using WordPress.
+    - Change PUSH_PUBLIC_KEY and PUSH_SAVE_ENDPOINT in `/assets/js/helpers.js` to fit yours.
 
 ## Useful Links
 

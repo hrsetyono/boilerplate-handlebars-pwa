@@ -3,7 +3,7 @@
 // https://developers.google.com/web/fundamentals/instant-and-offline/offline-cookbook/
 'use strict';
 
-const VERSION = '0.2.5';
+const VERSION = '0.1.0';
 const CACHE_BASE = 'my-app-';
 const STATIC_CACHE = CACHE_BASE + 'static-' + VERSION;
 const IMAGES_CACHE = CACHE_BASE + 'images';

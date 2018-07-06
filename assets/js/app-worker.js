@@ -2,13 +2,14 @@
 
 window.addEventListener( 'load', () => {
   let appWorker = new AppWorker();
-  let appPush = new AppPush();
 
   appWorker.register( '/service-worker.js' )
    .then( reg => {
      console.log( 'Service Worker Ready' );
 
-     appPush.subscribe( reg );
+     // TODO: Uncomment this to enable Web Push
+     // let appPush = new AppPush();
+     // appPush.subscribe( reg );
    });
 } );
 
@@ -75,7 +76,7 @@ class AppPush {
       I'm using WordPress to save the subscription data
       By using my plugin: https://github.com/hrsetyono/wp-edje/wiki/Web-Push
     */
-    MY_API.post( 'http://wp.test/wp-json/h/v0/subscribe', body )
+    MY_API.post( PUSH_SAVE_ENDPOINT, body )
       .then( response => {
         console.log( 'Push Notification Subscribed' );
         console.log( response );

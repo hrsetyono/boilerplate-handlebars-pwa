@@ -1,5 +1,6 @@
 const API_BASE = 'https://public-api.wordpress.com/rest/v1.1/sites/hrsetyono.wordpress.com';
-const PUBLIC_KEY = 'BPqhA8ofNI5_FTDZRfv1y2Ov0GXH9XU6SgWrbgNTO7MmZVwUZzqSflmIl8UxoimCr57BKnDJPtF6gctN0kmmUnM';
+const PUSH_PUBLIC_KEY = 'BPqhA8ofNI5_FTDZRfv1y2Ov0GXH9XU6SgWrbgNTO7MmZVwUZzqSflmIl8UxoimCr57BKnDJPtF6gctN0kmmUnM';
+const PUSH_SAVE_ENDPOINT = 'http://wp.test/wp-json/h/v0/subscribe';
 
 /*
   Data Model - Get data from cache, if empty, do API call.
@@ -185,7 +186,7 @@ const MY_PUSH = {
       .then( isSubbed => {
         if( isSubbed ) { throw new Error( 'ERROR - User already subscribed' ); }
 
-        const serverKey = this._urlB64ToUint8Array( PUBLIC_KEY );
+        const serverKey = this._urlB64ToUint8Array( PUSH_PUBLIC_KEY );
 
         // prompt user to allow / block
         return reg.pushManager.subscribe({
