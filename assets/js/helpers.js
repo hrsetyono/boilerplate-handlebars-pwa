@@ -1,3 +1,5 @@
+'use strict';
+
 const API_BASE = 'https://public-api.wordpress.com/rest/v1.1/sites/hrsetyono.wordpress.com';
 const PUSH_PUBLIC_KEY = 'BPqhA8ofNI5_FTDZRfv1y2Ov0GXH9XU6SgWrbgNTO7MmZVwUZzqSflmIl8UxoimCr57BKnDJPtF6gctN0kmmUnM';
 const PUSH_SAVE_ENDPOINT = 'http://wp.test/wp-json/h/v0/subscribe';
@@ -50,7 +52,7 @@ class H_Model {
 
 
   set() {
-    return H_API.get( this.endpoint );
+    return H_API.get( this.endpoint )
       .then( data => {
         localforage.setItem( this.cacheKey, data );
         return data;
@@ -238,7 +240,7 @@ const H_PUSH = {
 
   /*
     Encrypt Public Key
-    
+
     @param base64String (string)
   */
   _urlB64ToUint8Array( base64String ) {
